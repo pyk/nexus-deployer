@@ -3,7 +3,6 @@ pragma solidity >=0.8.0;
 
 import { Test, console } from "forge-std/Test.sol";
 
-import { BytecodeDeployer } from "./BytecodeDeployer.sol";
 import { INexus } from "./interfaces/INexus.sol";
 import { INexusFactory } from "./interfaces/INexusFactory.sol";
 import { INexusBootstrap } from "./interfaces/INexusBootstrap.sol";
@@ -11,7 +10,7 @@ import { IValidator } from "./interfaces/IValidator.sol";
 
 import { DefaultValidator } from "./modules/DefaultValidator.sol";
 
-contract NexusDeployer is Test, BytecodeDeployer {
+contract NexusDeployer is Test {
     ////////////////////////////////////////////////////////////////
     //                    Deployment utilities                    //
     ////////////////////////////////////////////////////////////////
@@ -22,9 +21,16 @@ contract NexusDeployer is Test, BytecodeDeployer {
         INexusBootstrap bootstrap;
     }
 
+    function deployNexusCreationCode(bytes memory creationBytecode) private returns (address contractAddress) {
+        assembly {
+            contractAddress := create(0, add(creationBytecode, 0x20), mload(creationBytecode))
+        }
+        require(contractAddress != address(0), "deployment failed");
+    }
+
     function deployNexusImplementation(address entrypoint) internal returns (INexus nexus) {
         bytes memory creationBytecode = bytes.concat(NEXUS_IMPLEMENTATION_V1_2_0, abi.encode(entrypoint));
-        nexus = INexus(deploy(creationBytecode));
+        nexus = INexus(deployNexusCreationCode(creationBytecode));
         vm.label(address(nexus), "NexusImplementation");
     }
 
@@ -36,7 +42,7 @@ contract NexusDeployer is Test, BytecodeDeployer {
         returns (INexusFactory factory)
     {
         bytes memory creationBytecode = bytes.concat(NEXUS_ACCOUNT_FACTORY, abi.encode(implementation, owner));
-        factory = INexusFactory(deploy(creationBytecode));
+        factory = INexusFactory(deployNexusCreationCode(creationBytecode));
         vm.label(address(factory), "NexusAccountFactory");
     }
 
@@ -49,7 +55,7 @@ contract NexusDeployer is Test, BytecodeDeployer {
     {
         bytes memory creationBytecode =
             bytes.concat(NEXUS_BOOTSTRAP_V1_2_0, abi.encode(validator, validatorOnInstallData));
-        bootstrap = INexusBootstrap(deploy(creationBytecode));
+        bootstrap = INexusBootstrap(deployNexusCreationCode(creationBytecode));
         vm.label(address(bootstrap), "NexusBootstrap");
     }
 
