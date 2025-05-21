@@ -58,4 +58,6 @@ interface INexusFactory is IStakeable, IOwnable {
         external
         view
         returns (address payable expectedAddress);
+
+    function ACCOUNT_IMPLEMENTATION() external returns (address);
 }

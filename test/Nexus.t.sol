@@ -17,15 +17,27 @@ contract NexusTest is Test, EntryPointDeployer, NexusDeployer {
         entryPoint = deployEntryPoint();
     }
 
-    function testDeployNexusImplementation() external {
-        IValidator validator = deployNexusDefaultValidator();
-        deployNexusImplementation(address(entryPoint), address(validator), "");
+    // function testDeployNexusImplementation() external {
+    //     IValidator validator = deployNexusDefaultValidator();
+    //     deployNexusImplementation(address(entryPoint), address(validator), "");
+    // }
+
+    // function testDeployNexusAccountFactory() external {
+    //     IValidator validator = deployNexusDefaultValidator();
+    //     INexus nexusImplementation = deployNexusImplementation(address(entryPoint), address(validator), "test");
+    //     INexusFactory nexusFactory = deployNexusAccountFactory(address(nexusImplementation), nexusFactoryOwner);
+    //     assertEq(nexusFactory.owner(), nexusFactoryOwner, "invalid owner");
+    // }
+
+    function testEtchNexusImplementation() external {
+        INexus impl = etchNexusImplementation();
+        assertEq(impl.entryPoint(), 0x0000000071727De22E5E9d8BAf0edAc6f37da032, "Invalid");
     }
 
-    function testDeployNexusAccountFactory() external {
-        IValidator validator = deployNexusDefaultValidator();
-        INexus nexusImplementation = deployNexusImplementation(address(entryPoint), address(validator), "test");
-        INexusFactory nexusFactory = deployNexusAccountFactory(address(nexusImplementation), nexusFactoryOwner);
-        assertEq(nexusFactory.owner(), nexusFactoryOwner, "invalid owner");
+    function testEtchNexusAccountFactory() external {
+        INexus impl = etchNexusImplementation();
+        INexusFactory factory = etchNexusAccountFactory();
+        assertEq(factory.owner(), address(0), "invalid owner");
+        assertEq(factory.ACCOUNT_IMPLEMENTATION(), address(impl), "invalid implementation");
     }
 }

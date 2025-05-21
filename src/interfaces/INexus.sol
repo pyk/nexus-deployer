@@ -37,4 +37,6 @@ interface INexus is IERC4337Account, IERC7579Account, INexusEventsAndErrors {
     /// Can be called directly or via a factory.
     /// @param initData Encoded data used for the account's configuration during initialization.
     function initializeAccount(bytes calldata initData) external payable;
+
+    function entryPoint() external view returns (address);
 }
