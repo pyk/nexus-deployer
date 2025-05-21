@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
+import { IStakeable } from "./IStakeable.sol";
+import { IOwnable } from "./IOwnable.sol";
+
 // ──────────────────────────────────────────────────────────────────────────────
 //     _   __    _  __
 //    / | / /__ | |/ /_  _______
@@ -19,7 +22,7 @@ pragma solidity >=0.8.0;
 /// @author @filmakarov | Biconomy | filipp.makarov@biconomy.io
 /// @author @zeroknots | Rhinestone.wtf | zeroknots.eth
 /// Special thanks to the Solady team for foundational contributions: https://github.com/Vectorized/solady
-interface INexusFactory {
+interface INexusFactory is IStakeable, IOwnable {
     /// @notice Emitted when a new Smart Account is created.
     /// @param account The address of the newly created account.
     /// @param initData Initialization data used for the new Smart Account.
